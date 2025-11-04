@@ -12,7 +12,7 @@ const Search = ({ optionsData, userData }) => {
     e.preventDefault();
     const response = await searchByName(selectedOptions, search);
     console.info("🚀 ~ handleSearch ~ response:", response);
-    userData(response.data);
+    userData(response?.data);
     setShowOptions(false);
   };
   return (
@@ -85,6 +85,8 @@ const Search = ({ optionsData, userData }) => {
             placeholder="Search"
             onChange={(e) => {
               setSearch(e.target.value);
+            }}
+            onFocus={() => {
               setShowOptions(false);
             }}
             required

@@ -1,4 +1,5 @@
-import Pagination from "../components/Pagination";
+// import Pagination from "../components/Pagination";
+import { handleApiError } from "../utility/ApiError";
 import { handleApiResponse } from "../utility/ApiResponse";
 import { errorHandler, responseHandler } from "../utility/helpers";
 import axiosInstance from "./axios";
@@ -9,7 +10,7 @@ export const userService = {
       const response = await axiosInstance.get("/api/users");
       return handleApiResponse(response);
     } catch (err) {
-      errorHandler(err);
+      handleApiError(err);
     }
   },
   updateUserDetails: async (id, data) => {
@@ -17,7 +18,7 @@ export const userService = {
       const response = await axiosInstance.put(`/api/users/${id}`, data);
       return handleApiResponse(response);
     } catch (error) {
-      errorHandler(error);
+      handleApiError(error);
     }
   },
   searchByName: async (searchQuery, searchQueryValue) => {
@@ -27,7 +28,15 @@ export const userService = {
       );
       return handleApiResponse(response);
     } catch (error) {
-      errorHandler(error);
+      handleApiError(error);
+    }
+  },
+  deleteUserDetails: async (id) => {
+    try {
+      const response = await axiosInstance.delete(`/api/users/${id}`);
+      return handleApiResponse(response);
+    } catch (error) {
+      handleApiError(error);
     }
   },
   pagination: async (totalPages, limit) => {
@@ -37,7 +46,7 @@ export const userService = {
       );
       return handleApiResponse(response);
     } catch (error) {
-      errorHandler(error);
+      handleApiError(error);
     }
   },
 };

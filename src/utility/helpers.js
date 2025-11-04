@@ -3,9 +3,11 @@ const BASE_URL = "http://localhost:3000";
 export const errorHandler = async (error) => {
   if (
     error.response &&
-    (error.response.status === 401 || error.response.status === 403)
+    (error.response.status === 401 ||
+      error.response.status === 403 ||
+      error.response.status === 400)
   ) {
-    const refresh_token = localStorage.getItem("refresh-token");
+    const refresh_token = JSON.parse(localStorage.getItem("refresh-token"));
     if (!refresh_token) {
       console.warn("No refresh token found. Redirecting to login...");
       localStorage.removeItem("access");
@@ -17,10 +19,11 @@ export const errorHandler = async (error) => {
       const response = await axios.post(refresh_token_url, {
         refresh: refresh_token,
       });
+      console.info("🚀 ~ errorHandler ~ response:", response);
 
-      const newAccesToken = response.data.token;
+      const newAccesToken = response.data.data.token;
 
-      localStorage.setItem("access", newAccesToken);
+      localStorage.setItem("token", JSON.stringify(newAccesToken));
 
       const originalRequest = error.config;
       originalRequest.headers.Authorization = `${newAccesToken}`;

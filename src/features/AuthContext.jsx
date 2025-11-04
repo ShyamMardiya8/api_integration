@@ -77,6 +77,15 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const deleteUserDetails = async (id) => {
+    try {
+      const response = await userService.deleteUserDetails(id);
+      return response;
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const groupPagination = async (page, limit) => {
     try {
       const response = await userService.pagination(page, limit);
@@ -95,6 +104,7 @@ export const AuthProvider = ({ children }) => {
       updateUserDetails,
       searchByName,
       groupPagination,
+      deleteUserDetails,
     }),
     [user, loading]
   );

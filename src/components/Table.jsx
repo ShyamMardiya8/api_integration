@@ -5,6 +5,7 @@ import { handleApiResponse } from "../utility/ApiResponse";
 import { userAuth } from "../features/AuthContext";
 import Search from "./Search";
 import Pagination from "./Pagination";
+import { Delete, DeleteIcon, Trash2 } from "lucide-react";
 
 const Table = () => {
   const [cellValue, setCellValue] = useState({
@@ -15,27 +16,24 @@ const Table = () => {
 
   const [userData, setUserData] = useState([]);
   const [bodyValue, setBodyValue] = useState({});
-  const { updateUserDetails } = userAuth();
+  const { updateUserDetails, deleteUserDetails } = userAuth();
   const [totalPages, setTotalPages] = useState(0);
 
+  const fetchData = async () => {
+    try {
+      const response = await userService.getUserDetails();
+      console.info("🚀 ~ fetchData ~ response:", response);
+      setUserData(response.data);
+      setTotalPages(response.totalDocuments);
+    } catch (err) {
+      console.error(err);
+    }
+  };
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await userService.getUserDetails();
-        console.info("🚀 ~ fetchData ~ response:", response);
-        setUserData(response.data);
-        setTotalPages(response.totalDocuments);
-      } catch (err) {
-        console.error(err);
-      }
-    };
     fetchData();
   }, []);
 
   const handleEdit = (idx, fieldName, value, item) => {
-    console.info("🚀 ~ handleEdit ~ item:", item);
-    console.info("🚀 ~ handleEdit ~ value:", value);
-    console.info("🚀 ~ handleEdit ~ fieldName:", fieldName);
     setCellValue({ rowIndex: idx, fieldName, value });
   };
 
@@ -66,8 +64,15 @@ const Table = () => {
   const handleUpdate = async (body) => {
     if (!body?._id) return;
     const response = await updateUserDetails(body?._id, body?.data);
-    console.info("🚀 ~ handleUpdate ~ body:", body);
-    console.info("🚀 ~ handleUpdate ~ response:", response);
+    alert(response.message);
+  };
+
+  const handleDelete = async (id) => {
+    console.log("clicked delete button");
+    if (!id) return;
+    const response = await deleteUserDetails(id);
+    alert(response?.message);
+    fetchData();
   };
   return (
     <>
@@ -79,6 +84,7 @@ const Table = () => {
               <th className="p-2 border">Name</th>
               <th className="p-2 border">age</th>
               <th className="p-2 border">email</th>
+              <th className="p-2 border">Delete</th>
             </tr>
           </thead>
           <tbody>
@@ -107,6 +113,9 @@ const Table = () => {
                     )}
                   </td>
                 ))}
+                <td className="p-2 border cursor-pointer">
+                  <Trash2 onClick={() => handleDelete(item._id)} />
+                </td>
               </tr>
             ))}
           </tbody>
